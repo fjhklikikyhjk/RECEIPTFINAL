@@ -14,7 +14,7 @@ export default function TabLayout() {
         name='index'
         options={{
           title: "Camera",
-          tabBarActiveTintColor: "#0000CC",
+          tabBarActiveTintColor: "#0ea5e9",
           tabBarIconStyle: "#0000FF",
           tabBarInactiveTintColor: "#858D92",
           headerShown: false,
@@ -27,13 +27,27 @@ export default function TabLayout() {
         name='(home)'
         options={{
           title: "Receipts",
-          tabBarActiveTintColor: "#0000FF",
+          tabBarActiveTintColor: "#0ea5e9",
           tabBarIconStyle: "#0000FF",
           tabBarInactiveTintColor: "#858D92",
           headerShown: false,
 
           tabBarIcon: ({ color, size }) => (
             <FontAwesome6 name='receipt' size={25} color={color} />
+          ),
+        }}
+      ></Tabs.Screen>
+      <Tabs.Screen
+        name='dashboard'
+        options={{
+          title: "Dashboard",
+          tabBarActiveTintColor: "#0ea5e9",
+          tabBarIconStyle: "#0000FF",
+          tabBarInactiveTintColor: "#858D92",
+          headerShown: false,
+
+          tabBarIcon: ({ color, size }) => (
+            <FontAwesome name='pie-chart' size={25} color={color} />
           ),
         }}
       ></Tabs.Screen>

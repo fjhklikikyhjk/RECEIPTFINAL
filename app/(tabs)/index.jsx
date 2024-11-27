@@ -20,6 +20,8 @@ import Animated, {
   withTiming,
   Easing,
 } from "react-native-reanimated";
+import { MotiView } from "moti";
+import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
 const AnimatedFontAwesomeIcon = () => {
   // Create a shared value for rotation
   const rotation = useSharedValue(0);
@@ -59,12 +61,16 @@ const AnimatedFontAwesomeIcon = () => {
 };
 
 function CameraScreen() {
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState(false);
+  let geturi;
   const { receiptsStore, addReceipt } = useReceiptStore();
   const [isProcessed, setIsProcessed] = useState(false);
   const fileUri = FileSystem.documentDirectory + "receipt.json";
   useEffect(() => {
-    loadReceipts();
+    if (fileUri != null) {
+      loadReceipts();
+      console.log("loaded form useEffect");
+    }
   }, []);
 
   async function saveReceipts(receipt) {
@@ -75,11 +81,23 @@ function CameraScreen() {
         const data = await FileSystem.readAsStringAsync(fileUri);
         existingReceipts = JSON.parse(data || "[]");
       }
-      let today = new Date();
-      receipt.createdDay = today.toISOString().split("T")[0];
+      if (Object.keys(receipt).length > 5) {
+        let today = new Date();
+        receipt.createdDay = today.toISOString().split("T")[0];
 
-      console.log(receipt);
-      existingReceipts.push(receipt);
+        const fileName = geturi.split("/").pop(); // Get the file name from the URI
+        const destinationUri = `${FileSystem.documentDirectory}${fileName}`; // App's document directory
+        await FileSystem.moveAsync({
+          from: geturi,
+          to: destinationUri,
+        });
+
+        receipt.uri = destinationUri;
+
+        console.log(receipt, "saveReceipts");
+        existingReceipts.push(receipt);
+      }
+
       await FileSystem.writeAsStringAsync(
         fileUri,
         JSON.stringify(existingReceipts)
@@ -104,23 +122,19 @@ function CameraScreen() {
 
   async function pickImageGallery() {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== "granted") {
-      Alert.alert(
-        "Permission Denied",
-        "Permission to access gallery is required."
-      );
-      return;
-    }
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["image"],
       allowsEditing: true,
       aspect: [4, 3],
-      quality: 1,
+      quality: 0.6,
+      base64: true,
     });
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
+      setIsProcessed(true);
+      await uploadToLambda(base64);
       // You might want to call openAiCall here if needed
     }
   }
@@ -174,11 +188,11 @@ function CameraScreen() {
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
+      geturi = result.assets[0].uri;
       const base64 = result.assets[0].base64;
       console.log(base64, "base64");
-
-      await uploadToLambda(base64);
       setIsProcessed(true);
+      await uploadToLambda(base64);
     }
   }
 
@@ -196,9 +210,20 @@ function CameraScreen() {
           </View>
 
           <View className='flex-1 justify-center h-96 items-center '>
-            <Text className='text-4xl text-white mb-14 font-medium '>
-              Get Started Tracking Your Receipt
-            </Text>
+            <MotiView
+              from={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ type: "timing", duration: 1000 }}
+              className='items-center mb-14'
+            >
+              <Text className='text-4xl text-white font-bold mb-2'>
+                Get Started
+              </Text>
+              <Text className='text-2xl text-sky-400 font-medium'>
+                Tracking Your Receipts
+              </Text>
+              <View className='h-1 w-20 bg-sky-500 mt-4 rounded-full' />
+            </MotiView>
             {image ? (
               <View className='w-fit h-fit z-50 flex justify-center  items-center'>
                 {isProcessed ? (

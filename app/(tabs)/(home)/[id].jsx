@@ -1,4 +1,11 @@
-import { View, Text, ScrollView, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  Pressable,
+  TextInput,
+  Image,
+} from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import { useReceiptStore } from "../../../store/receiptStore";
 import React, { useEffect, useState } from "react";
@@ -9,6 +16,7 @@ const MyReceipts = () => {
   const [rightReceipt, setRightReceipt] = useState(null);
   const { id } = useLocalSearchParams();
   const [isLoading, setIsLoading] = useState(true);
+  const [isexpand, setIsexpand] = useState(false);
   const fileUri = FileSystem.documentDirectory + "receipt.json";
   useEffect(() => {
     function getRightItem() {
@@ -17,7 +25,6 @@ const MyReceipts = () => {
     }
     getRightItem();
   }, [id, receiptsStore]);
-
   async function deleteObject(id) {
     setIsLoading(false);
     const fileContent = await FileSystem.readAsStringAsync(fileUri);
@@ -36,13 +43,42 @@ const MyReceipts = () => {
     }
   }
 
+  async function editObject() {
+    console.log(text);
+    const fileContent = await FileSystem.readAsStringAsync(fileUri);
+
+    try {
+      const data = JSON.parse(fileContent);
+      console.log(data);
+
+      const newdata = data.map((item) => {
+        if (item.id === id) {
+          itemkey = text;
+        }
+      });
+
+      addReceipt(newdata);
+      await FileSystem.writeAsStringAsync(fileUri, JSON.stringify(newdata));
+
+      console.log("Object Edited successfully");
+      router.back();
+    } catch (error) {
+      console.error("Error Deleting object form file", error);
+    }
+  }
+
   const ItemRow = ({ item }) => (
     <View className='flex-row justify-between py-2 border-b border-zinc-800/30'>
       <View className='flex-row gap-4'>
-        <Text className='text-zinc-400 w-8'>{item.quantity || 1}</Text>
-        <Text className='text-zinc-300 flex-1'>{item.item}</Text>
+        <TextInput
+          onChangeText={() => editObject(id, item.quantity)}
+          className='text-zinc-400 w-8'
+        >
+          {item.quantity || 1}
+        </TextInput>
+        <TextInput className='text-zinc-300 -left-6 '>{item.item}</TextInput>
       </View>
-      <Text className='text-zinc-300'>${item.price}</Text>
+      <TextInput className='text-zinc-300'>${item.price}</TextInput>
     </View>
   );
 
@@ -61,6 +97,14 @@ const MyReceipts = () => {
   return (
     <View className='bg-zinc-900 h-full pt-20 '>
       <ScrollView>
+        <Pressable onPress={() => setIsexpand(!isexpand)}>
+          <Image
+            source={{ uri: rightReceipt?.uri }}
+            className={`w-11/12 items-centers ml-4 mt-3 ${
+              isexpand ? "h-full" : "h-44"
+            } rounded-3xl`}
+          />
+        </Pressable>
         <View className='m-4 bg-zinc-800/50 rounded-xl border border-zinc-700/50 shadow-lg shadow-zinc-900/50 overflow-hidden'>
           {/* Diagonal pattern overlay */}
           <View className='absolute inset-0 opacity-5'>
@@ -124,7 +168,7 @@ const MyReceipts = () => {
         </View>
         <View className='w-screen h-fit flex items-center justify-center'>
           <Pressable
-            className='w-44 h-fit p-6 bg-red-700 rounded-md mb-56'
+            className='w-44 h-fit p-6 bg-white rounded-md mb-56'
             onPress={() => deleteObject(rightReceipt?.id)}
           >
             <Text className='text-center'>DELETE</Text>
