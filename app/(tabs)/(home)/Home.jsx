@@ -48,7 +48,7 @@ export default function ReceiptList() {
               {item.store_name}
             </Text>
             <Text className='text-sm text-white mt-1'>{item.date}</Text>
-            <Text className='bg-zinc-50 p-1 rounded-full mt-1 px-2'>
+            <Text className='bg-zinc-50 p-1 w-fit rounded-full mt-1 px-2'>
               {item.category}
             </Text>
           </View>
@@ -111,7 +111,7 @@ export default function ReceiptList() {
             <TouchableOpacity
               className='bg-sky-500 py-4 px-8 rounded-full flex-row items-center'
               activeOpacity={0.8}
-              onPress={() => router.replace("/(tabs)")}
+              onPress={() => router.replace("/(signUpFlow)/signUpPage")}
             >
               <Text className='text-white font-semibold text-lg mr-2'>
                 Add Receipt
@@ -124,7 +124,7 @@ export default function ReceiptList() {
         </View>
       ) : (
         <FlatList
-          data={filterStore.reverse()}
+          data={filterStore}
           renderItem={renderReceiptItem}
           keyExtractor={(item) => item.id}
           className='flex-1'

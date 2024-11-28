@@ -65,34 +65,6 @@ export default function ExpenseDashboard() {
   const [newPieData, setNewPieData] = useState([]);
   const [mapStore, setMapStore] = useState("");
   const router = useRouter();
-  function addTotal() {
-    const sumOfTotal = receiptsStore?.reduce((accumulator, currentValue) => {
-      return accumulator + parseFloat(currentValue.total);
-    }, 0);
-    setTotal(sumOfTotal);
-  }
-
-  function addTax() {
-    const sumOfTotal = receiptsStore?.reduce((accumulator, currentValue) => {
-      return accumulator + parseFloat(currentValue.tax);
-    }, 0);
-    setTax(sumOfTotal.toFixed(2));
-  }
-  function numberOfTransactions() {
-    let allTransaction = receiptsStore?.map((item) => item.store_name);
-    setTransactions(allTransaction.length);
-  }
-
-  function findOutPercent(argCategorie) {
-    const categoriesTotal = receiptsStore
-      ?.filter((item) => item.category == argCategorie)
-      .reduce((accumulator, currentValue, index) => {
-        return accumulator + parseFloat(currentValue.total);
-      }, 0);
-
-    pieAmount.push(categoriesTotal);
-    console.log(pieAmount, "Pie Amount");
-  }
 
   useEffect(() => {
     if (!receiptsStore || receiptsStore.length === 0) return;
@@ -104,7 +76,9 @@ export default function ExpenseDashboard() {
         acc.total += parseFloat(receipt.total);
 
         // Tax calculation
-        acc.tax += parseFloat(receipt.tax);
+        if (receipt.tax !== "Not Provided") {
+          acc.tax += parseFloat(receipt.tax);
+        }
 
         // Category-wise breakdown
         const categoryIndex = pieChartData.findIndex(
@@ -125,7 +99,7 @@ export default function ExpenseDashboard() {
     );
 
     // Set calculated values
-    setTotal(calculations.total);
+    setTotal(calculations.total.toFixed(2));
     setTax(calculations.tax.toFixed(2));
     setTransactions(receiptsStore.length);
 
@@ -262,15 +236,14 @@ export default function ExpenseDashboard() {
           <View className='flex-row justify-between items-center'>
             <View>
               <Text className='text-white text-lg font-semibold'>
-                {receiptsStore.reverse()[0]?.store_name}
+                {mapStore[0]?.store_name}
               </Text>
               <Text className='text-zinc-400'>
-                {receiptsStore.reverse()[0]?.category} •
-                {receiptsStore.reverse()[0]?.date}
+                {mapStore[0]?.category} •{mapStore[0]?.date}
               </Text>
             </View>
             <Text className='text-white text-lg font-bold'>
-              ${receiptsStore.reverse()[0]?.total}
+              ${mapStore[0]?.total}
             </Text>
           </View>
         </View>
@@ -278,15 +251,14 @@ export default function ExpenseDashboard() {
           <View className='flex-row justify-between items-center'>
             <View>
               <Text className='text-white text-lg font-semibold'>
-                {receiptsStore.reverse()[1]?.store_name}
+                {receiptsStore[1]?.store_name}
               </Text>
               <Text className='text-zinc-400'>
-                {receiptsStore.reverse()[1]?.category} •
-                {receiptsStore.reverse()[1]?.date}
+                {mapStore[1]?.category} •{mapStore[1]?.date}
               </Text>
             </View>
             <Text className='text-white text-lg font-bold'>
-              ${receiptsStore.reverse()[1]?.total}
+              ${mapStore[1]?.total}
             </Text>
           </View>
         </View>

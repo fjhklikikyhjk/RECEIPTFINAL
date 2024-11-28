@@ -70,7 +70,7 @@ function CameraScreen() {
   const fileUri = FileSystem.documentDirectory + "receipt.json";
   useEffect(() => {
     loadReceipts();
-    receiptsStore.reverse();
+    receiptsStore;
     console.log("loaded form useEffect");
   }, []);
 
@@ -98,11 +98,8 @@ function CameraScreen() {
         console.log(receipt, "saveReceipts");
         existingReceipts.push(receipt);
       }
-
-      await FileSystem.writeAsStringAsync(
-        fileUri,
-        JSON.stringify(existingReceipts)
-      );
+      let revAarry = existingReceipts.reverse();
+      await FileSystem.writeAsStringAsync(fileUri, JSON.stringify(revAarry));
       console.log("Receipts saved successfully");
       loadReceipts();
     } catch (error) {
@@ -178,6 +175,8 @@ function CameraScreen() {
       console.log(responseJson, "THIS IS MY response");
     } catch (error) {
       console.log(error);
+      setIsProcessed(false);
+      setImage(false);
     }
   }
 

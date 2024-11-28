@@ -76,7 +76,9 @@ const MyReceipts = () => {
         >
           {item.quantity || 1}
         </TextInput>
-        <TextInput className='text-zinc-300 -left-6 '>{item.item}</TextInput>
+        <TextInput className='text-zinc-300 -left-6 text-wrap w-72  '>
+          {item.item}
+        </TextInput>
       </View>
       <TextInput className='text-zinc-300'>${item.price}</TextInput>
     </View>
@@ -95,8 +97,8 @@ const MyReceipts = () => {
   }
 
   return (
-    <View className='bg-zinc-900 h-full pt-20 '>
-      <ScrollView className='-z-30'>
+    <View className='bg-zinc-900 h-full pt-20 -z-50 '>
+      <ScrollView className='-z-50'>
         <Pressable onPress={() => setIsexpand(!isexpand)}>
           <Image
             source={{ uri: rightReceipt?.uri }}

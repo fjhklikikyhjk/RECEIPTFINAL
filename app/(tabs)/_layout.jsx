@@ -40,7 +40,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name='dashboard'
         options={{
-          title: "Dashboard",
+          title: "Expenses",
           tabBarActiveTintColor: "#0ea5e9",
           tabBarIconStyle: "#0000FF",
           tabBarInactiveTintColor: "#858D92",

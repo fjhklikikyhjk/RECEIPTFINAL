@@ -5,7 +5,7 @@ export default function RootLayout() {
   return (
     <Stack>
       <Stack.Screen name='introFlowOne' options={{ headerShown: false }} />
-      <Stack.Screen name='signUpPage' options={{ header: false }} />
+      <Stack.Screen name='signUpPage' options={{ headerShown: false }} />
     </Stack>
   );
 }
