@@ -6,6 +6,7 @@ import {
   Image,
   Pressable,
   SafeAreaView,
+  Linking,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import OpenAI from "openai";
@@ -22,6 +23,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { MotiView } from "moti";
 import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
+import { FeImage } from "react-native-svg";
 const AnimatedFontAwesomeIcon = () => {
   // Create a shared value for rotation
   const rotation = useSharedValue(0);
@@ -67,10 +69,9 @@ function CameraScreen() {
   const [isProcessed, setIsProcessed] = useState(false);
   const fileUri = FileSystem.documentDirectory + "receipt.json";
   useEffect(() => {
-    if (fileUri != null) {
-      loadReceipts();
-      console.log("loaded form useEffect");
-    }
+    loadReceipts();
+    receiptsStore.reverse();
+    console.log("loaded form useEffect");
   }, []);
 
   async function saveReceipts(receipt) {
@@ -110,29 +111,41 @@ function CameraScreen() {
   }
 
   async function loadReceipts() {
-    try {
-      const data = await FileSystem.readAsStringAsync(fileUri);
-      const receipts = JSON.parse(data);
+    const fileInfo = await FileSystem.getInfoAsync(fileUri);
+    if (fileInfo.exists) {
+      try {
+        const data = await FileSystem.readAsStringAsync(fileUri);
+        console.log(data);
+        const receipts = JSON.parse(data);
 
-      addReceipt(receipts);
-    } catch (error) {
-      console.error("Error loading receipts", error);
+        addReceipt(receipts);
+      } catch (error) {
+        console.error("Error loading receipts", error);
+      }
     }
   }
 
   async function pickImageGallery() {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-
+    if (status !== "granted") {
+      Alert.alert(
+        "Permission Denied",
+        "Permission to access gallery is required."
+      );
+      return;
+    }
     const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ["image"],
-      allowsEditing: true,
+      mediaTypes: ["images"],
+      allowsEditing: false,
       aspect: [4, 3],
-      quality: 0.6,
+      quality: 1,
       base64: true,
     });
 
     if (!result.canceled) {
       setImage(result.assets[0].uri);
+      geturi = result.assets[0].uri;
+      const base64 = result.assets[0].base64;
       setIsProcessed(true);
       await uploadToLambda(base64);
       // You might want to call openAiCall here if needed

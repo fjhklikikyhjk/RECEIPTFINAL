@@ -28,7 +28,7 @@ const MyReceipts = () => {
   async function deleteObject(id) {
     setIsLoading(false);
     const fileContent = await FileSystem.readAsStringAsync(fileUri);
-
+    console.log("pressed delete");
     try {
       const data = JSON.parse(fileContent);
       console.log(data);
@@ -96,12 +96,12 @@ const MyReceipts = () => {
 
   return (
     <View className='bg-zinc-900 h-full pt-20 '>
-      <ScrollView>
+      <ScrollView className='-z-30'>
         <Pressable onPress={() => setIsexpand(!isexpand)}>
           <Image
             source={{ uri: rightReceipt?.uri }}
             className={`w-11/12 items-centers ml-4 mt-3 ${
-              isexpand ? "h-full" : "h-44"
+              isexpand ? "h-[500px]" : "h-44"
             } rounded-3xl`}
           />
         </Pressable>
@@ -166,12 +166,12 @@ const MyReceipts = () => {
             </View>
           </View>
         </View>
-        <View className='w-screen h-fit flex items-center justify-center'>
+        <View className='w-screen h-fit flex items-center -z-50 justify-center mb-56'>
           <Pressable
-            className='w-44 h-fit p-6 bg-white rounded-md mb-56'
+            className='w-44 h-fit p-6 py-7 mt-3 z-50  bg-white rounded-md '
             onPress={() => deleteObject(rightReceipt?.id)}
           >
-            <Text className='text-center'>DELETE</Text>
+            <Text className='text-center z-50 '>DELETE</Text>
           </Pressable>
         </View>
       </ScrollView>

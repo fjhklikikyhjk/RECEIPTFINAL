@@ -28,22 +28,22 @@ const pieChartData = [
   { name: "Groceries", amount: 0, color: "#36A2EB" },
   { name: "Transportation", amount: 0, color: "#FFCE56" },
   { name: "Entertainment", amount: 0, color: "#4BC0C0" },
-  { name: "Rent/Mortgage", amount: 0, color: "#4BC0C0" },
-  { name: "Utilities", amount: 0, color: "#4BC0C0" },
-  { name: "Transportation", amount: 0, color: "#4BC0C0" },
-  { name: "Health & Fitness", amount: 0, color: "#4BC0C0" },
-  { name: "Insurance", amount: 0, color: "#4BC0C0" },
-  { name: "Shopping", amount: 0, color: "#4BC0C0" },
-  { name: "Travel", amount: 0, color: "#4BC0C0" },
-  { name: "Education", amount: 0, color: "#4BC0C0" },
-  { name: "Personal Care", amount: 0, color: "#4BC0C0" },
-  { name: "Savings/Investments", amount: 0, color: "#4BC0C0" },
-  { name: "Debt Payments", amount: 0, color: "#4BC0C0" },
-  { name: "Childcare", amount: 0, color: "#4BC0C0" },
-  { name: "Gifts & Donations", amount: 0, color: "#4BC0C0" },
-  { name: "Home Maintenance", amount: 0, color: "#4BC0C0" },
-  { name: "Pet Care", amount: 0, color: "#4BC0C0" },
-  { name: "Miscellaneous", amount: 0, color: "#4BC0C0" },
+  { name: "Rent/Mortgage", amount: 0, color: "#FAD4C0 " },
+  { name: "Utilities", amount: 0, color: "#2E0219" },
+  { name: "Transportation", amount: 0, color: "#4A001F" },
+  { name: "Health & Fitness", amount: 0, color: "#6A0F49" },
+  { name: "Insurance", amount: 0, color: "#A7C4C2" },
+  { name: "Shopping", amount: 0, color: "#97EFE9" },
+  { name: "Travel", amount: 0, color: "#181D27" },
+  { name: "Education", amount: 0, color: "#254D32" },
+  { name: "Personal Care", amount: 0, color: "#3A7D44" },
+  { name: "Savings/Investments", amount: 0, color: "#69B578" },
+  { name: "Debt Payments", amount: 0, color: "#E8985E" },
+  { name: "Childcare", amount: 0, color: "#D0DB97 " },
+  { name: "Gifts & Donations", amount: 0, color: "#A9714B" },
+  { name: "Home Maintenance", amount: 0, color: "#54442B" },
+  { name: "Pet Care", amount: 0, color: "#262A10" },
+  { name: "Miscellaneous", amount: 0, color: "#141204" },
 ];
 
 const lineChartData = {
@@ -91,29 +91,54 @@ export default function ExpenseDashboard() {
       }, 0);
 
     pieAmount.push(categoriesTotal);
-    console.log(pieAmount);
+    console.log(pieAmount, "Pie Amount");
   }
+
   useEffect(() => {
-    addTotal();
-    numberOfTransactions();
-    addTax();
+    if (!receiptsStore || receiptsStore.length === 0) return;
 
-    for (let b of pieChartData) {
-      findOutPercent(b.name);
-    }
+    // Calculate totals and statistics in one pass
+    const calculations = receiptsStore.reduce(
+      (acc, receipt) => {
+        // Total calculation
+        acc.total += parseFloat(receipt.total);
 
-    for (let x in pieChartData) {
-      if (pieAmount[x] != 0) {
-        pieChartData[x].amount = pieAmount[x];
+        // Tax calculation
+        acc.tax += parseFloat(receipt.tax);
+
+        // Category-wise breakdown
+        const categoryIndex = pieChartData.findIndex(
+          (category) => category.name === receipt.category
+        );
+
+        if (categoryIndex !== -1) {
+          acc.pieData[categoryIndex] += parseFloat(receipt.total);
+        }
+
+        return acc;
+      },
+      {
+        total: 0,
+        tax: 0,
+        pieData: pieChartData.map(() => 0),
       }
-    }
+    );
 
-    let newData = pieChartData?.filter((obj) => obj.amount !== 0);
-    console.log(newData, "newData");
+    // Set calculated values
+    setTotal(calculations.total);
+    setTax(calculations.tax.toFixed(2));
+    setTransactions(receiptsStore.length);
 
-    setNewPieData(newData);
+    // Create new pie chart data with non-zero amounts
+    const newPieData = pieChartData
+      .map((category, index) => ({
+        ...category,
+        amount: calculations.pieData[index],
+      }))
+      .filter((category) => category.amount !== 0);
 
-    setMapStore(receiptsStore.reverse());
+    setNewPieData(newPieData);
+    setMapStore(receiptsStore);
   }, [receiptsStore]);
 
   if (receiptsStore?.length < 2) {
@@ -237,14 +262,15 @@ export default function ExpenseDashboard() {
           <View className='flex-row justify-between items-center'>
             <View>
               <Text className='text-white text-lg font-semibold'>
-                {mapStore[0]?.store_name}
+                {receiptsStore.reverse()[0]?.store_name}
               </Text>
               <Text className='text-zinc-400'>
-                {receiptsStore[0]?.category} •{receiptsStore[0]?.date}
+                {receiptsStore.reverse()[0]?.category} •
+                {receiptsStore.reverse()[0]?.date}
               </Text>
             </View>
             <Text className='text-white text-lg font-bold'>
-              ${receiptsStore[0]?.total}
+              ${receiptsStore.reverse()[0]?.total}
             </Text>
           </View>
         </View>
@@ -252,14 +278,15 @@ export default function ExpenseDashboard() {
           <View className='flex-row justify-between items-center'>
             <View>
               <Text className='text-white text-lg font-semibold'>
-                {receiptsStore[1]?.store_name}
+                {receiptsStore.reverse()[1]?.store_name}
               </Text>
               <Text className='text-zinc-400'>
-                {receiptsStore[1]?.category} •{receiptsStore[1]?.date}
+                {receiptsStore.reverse()[1]?.category} •
+                {receiptsStore.reverse()[1]?.date}
               </Text>
             </View>
             <Text className='text-white text-lg font-bold'>
-              ${receiptsStore[1]?.total}
+              ${receiptsStore.reverse()[1]?.total}
             </Text>
           </View>
         </View>

@@ -124,7 +124,7 @@ export default function ReceiptList() {
         </View>
       ) : (
         <FlatList
-          data={filterStore}
+          data={filterStore.reverse()}
           renderItem={renderReceiptItem}
           keyExtractor={(item) => item.id}
           className='flex-1'
