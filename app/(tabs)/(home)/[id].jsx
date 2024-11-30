@@ -150,7 +150,7 @@ const MyReceipts = () => {
               <View className='flex-row justify-between'>
                 <Text className='text-zinc-400'>Subtotal</Text>
                 <Text className='text-zinc-300'>
-                  ${rightReceipt?.total || "0.00"}
+                  ${rightReceipt?.subtotal || "0.00"}
                 </Text>
               </View>
               <View className='flex-row justify-between'>

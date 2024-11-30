@@ -111,7 +111,7 @@ export default function ReceiptList() {
             <TouchableOpacity
               className='bg-sky-500 py-4 px-8 rounded-full flex-row items-center'
               activeOpacity={0.8}
-              onPress={() => router.replace("/(signUpFlow)/signUpPage")}
+              onPress={() => router.replace("/(tabs)")}
             >
               <Text className='text-white font-semibold text-lg mr-2'>
                 Add Receipt

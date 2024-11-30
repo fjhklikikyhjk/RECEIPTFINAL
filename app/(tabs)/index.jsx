@@ -9,7 +9,6 @@ import {
   Linking,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import OpenAI from "openai";
 import * as FileSystem from "expo-file-system";
 import { useReceiptStore } from "../../store/receiptStore";
 import { Camera, ScanBarcode } from "lucide-react-native";
@@ -22,8 +21,7 @@ import Animated, {
   Easing,
 } from "react-native-reanimated";
 import { MotiView } from "moti";
-import { get } from "react-native/Libraries/TurboModule/TurboModuleRegistry";
-import { FeImage } from "react-native-svg";
+
 const AnimatedFontAwesomeIcon = () => {
   // Create a shared value for rotation
   const rotation = useSharedValue(0);
@@ -229,10 +227,10 @@ function CameraScreen() {
               className='items-center mb-14'
             >
               <Text className='text-4xl text-white font-bold mb-2'>
-                Get Started
+                Don't Wait
               </Text>
               <Text className='text-2xl text-sky-400 font-medium'>
-                Tracking Your Receipts
+                Track your receipts now
               </Text>
               <View className='h-1 w-20 bg-sky-500 mt-4 rounded-full' />
             </MotiView>
