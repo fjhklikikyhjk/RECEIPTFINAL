@@ -113,6 +113,7 @@ export default function AuthScreen() {
               });
               console.log(credential);
               // Sign in via Supabase Auth.
+              router.replace("/(tabs)");
               if (credential.identityToken) {
                 const {
                   error,
@@ -124,7 +125,7 @@ export default function AuthScreen() {
                 console.log(JSON.stringify({ error, user }, null, 2));
                 if (!error) {
                   // User is signed in.
-                  router.replace("/(tabs)");
+
                   console.log("isSginIN");
                   Alert.alert(
                     "Confirmation",
