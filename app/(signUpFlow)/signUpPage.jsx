@@ -1,4 +1,10 @@
-import { View, Text, TouchableOpacity, SafeAreaView } from "react-native";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  SafeAreaView,
+  Alert,
+} from "react-native";
 import "react-native-url-polyfill/auto";
 import * as React from "react";
 import * as AppleAuthentication from "expo-apple-authentication";
@@ -120,6 +126,21 @@ export default function AuthScreen() {
                   // User is signed in.
                   router.replace("/(tabs)");
                   console.log("isSginIN");
+                  Alert.alert(
+                    "Confirmation",
+                    "Are you sure you want to proceed?",
+                    [
+                      {
+                        text: "Cancel",
+                        onPress: () => console.log("Cancel Pressed"),
+                        style: "cancel",
+                      },
+                      {
+                        text: "OK",
+                        onPress: () => console.log("OK Pressed"),
+                      },
+                    ]
+                  );
                 }
               } else {
                 throw new Error("No identityToken.");
