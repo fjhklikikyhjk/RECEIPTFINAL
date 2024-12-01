@@ -2,7 +2,7 @@
   "expo": {
     "name": "RAI",
     "slug": "receiptwise",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "orientation": "portrait",
     "icon": "./assets/logo.png",
     "userInterfaceStyle": "light",
@@ -11,7 +11,7 @@
     "splash": {
       "image": "./assets/logo.png",
       "resizeMode": "contain",
-      "backgroundColor": "#00a5e9"
+      "backgroundColor": "#242623"
     },
     "ios": {
       "supportsTablet": true,

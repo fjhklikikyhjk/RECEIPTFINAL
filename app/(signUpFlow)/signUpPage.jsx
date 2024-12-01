@@ -113,7 +113,7 @@ export default function AuthScreen() {
               });
               console.log(credential);
               // Sign in via Supabase Auth.
-              router.replace("/(tabs)");
+
               if (credential.identityToken) {
                 const {
                   error,
@@ -127,21 +127,7 @@ export default function AuthScreen() {
                   // User is signed in.
 
                   console.log("isSginIN");
-                  Alert.alert(
-                    "Confirmation",
-                    "Are you sure you want to proceed?",
-                    [
-                      {
-                        text: "Cancel",
-                        onPress: () => console.log("Cancel Pressed"),
-                        style: "cancel",
-                      },
-                      {
-                        text: "OK",
-                        onPress: () => console.log("OK Pressed"),
-                      },
-                    ]
-                  );
+                  router.replace("/(tabs)");
                 }
               } else {
                 throw new Error("No identityToken.");
